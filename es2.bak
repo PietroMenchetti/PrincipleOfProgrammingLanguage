@@ -1,0 +1,105 @@
+#lang racket
+
+(struct leaf
+  (( content #:mutable) epmty))
+
+(struct node leaf   ;;ereditato
+  (left right))
+
+(define (creat-empty)
+  (leaf -1 #t))
+
+(define (creat-node v t1 t2)
+  (node v #f t1 t2))
+
+(define (display-tree t)
+  (if (not (node? t))
+      (if (leaf-epmty t)
+          (display "--\n")
+          (begin
+          (display "Leaf \n")
+          (display (leaf-content t))
+          (newline)))
+      (begin
+        (display "Node \n")
+        (display (leaf-content t))
+        (newline)
+        (display-tree (node-left t))
+        (display-tree (node-right t)))))
+
+(define (creat-leaf v)
+  (node v #f (creat-empty) (creat-empty)))
+
+(define (dsiplay-leaf l)
+  (if (leaf? l)
+      (display (leaf-content l))
+      (display "Not a leaf")))
+
+(define l1 (creat-leaf 10))
+(define l2 (creat-leaf 12))
+
+
+(define n1 ( creat-node 20 l1 l2))
+
+;; ++1 --> 2
+
+(define-syntax ++
+  (syntax-rules ()
+    ((+ i)
+     (let ()
+       (set! i (+ 1 i))))))
+
+(define-syntax **
+  (syntax-rules ()
+    ((_ i)
+     (set! i (* i i)))))
+
+(define (fact n)
+  (foldl (lambda(i x)(* i x)) 1 (range 1 (+ 1 n))))     ;;renge crea un array da lo a max
+
+(define (fib n)
+  (cond [(= n 0) 0]
+        [(= n 1) 0]
+        [(= n 2) 1]
+        [else (+ (fib (- n 1)) (fib (- n 2)))]))
+
+(define choose
+         (lambda( i . args)
+           (if (zero? i)
+               (car args)
+               (apply choose (- i 1) (cdr args)))))
+
+(time (choose 1 (lambda ()(fact 5)) (+ 1 2) (lambda ()(fib 40))))
+
+(define-syntax choose-m
+  (syntax-rules ()
+    ((_ i f) f)
+    ((_ i f f1 ...)(if (zero? i)
+                       f
+                       (choose-m (- i 1) f1 ...)))))
+
+;; continuation
+
+(define (right-now)
+  (call/cc
+   (lambda (x)
+     (x 1))))      ;;it will start again when you left
+
+(define (test-cc)
+  (call/cc (lambda ( escape)
+             (display "before esc\n")
+             (escape "escaping")                      ;; continution return the parameter passed
+             (display "after esc"))))
+
+(define (break-test)
+  (+
+  (call/cc (lambda (break)
+             (for-each
+              (lambda (i)
+                (when (= (modulo i 2) 0)
+                    (break (* 6 6))                       ;; chiamo la continuation senza parametro
+                    ))
+              '(5 3 5 7 9 2))))
+  3))
+
+(break-test)
