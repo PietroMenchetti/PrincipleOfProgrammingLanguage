@@ -1,0 +1,42 @@
+#lang racket
+
+(struct leaf
+  (( content #:mutable)))
+
+(struct branch
+     ((left #:mutable)
+      (right #:mutable)))
+
+
+(define (tmap! f tree)
+  (if (leaf? tree)
+      (set-leaf-content! tree (f (leaf-content tree)))
+      (begin
+        (tmap! f (branch-left tree))
+        (tmap! f (branch-right tree)))))
+
+(define (showTree tree)
+  (if (leaf? tree)
+      (display (leaf-content tree))
+      (begin
+      (displayln "Branch")
+      (showTree (branch-left tree))
+      (showTree (branch-right tree)))))
+
+(define (fringe tree)
+  (if (leaf? tree)
+      (append '() (list (leaf-content tree)))
+      (append (fringe (branch-left tree)) (fringe (branch-right tree)))))
+
+(define (reverse! t)
+  (let ((vals (reverse (fringe t))))
+    (tmap!
+     (lambda (x)
+   (let ((v (car vals)))
+   (set! vals (cdr vals))
+     v))
+     t)))
+
+                 
+
+        

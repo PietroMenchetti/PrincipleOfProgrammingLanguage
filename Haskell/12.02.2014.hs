@@ -1,0 +1,1 @@
+data Tree a = Leaf a | Branch a [Tree a]

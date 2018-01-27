@@ -1,0 +1,14 @@
+#lang racket
+
+(define (iter-vector vec)
+  (let ((curr 0)
+        (top (vector-length vec)))
+    (lambda ()
+      (if (= curr top)
+          'end
+          (let ((v (vector-ref vec curr)))
+            (set! curr (+ curr 1))
+            v)))))
+
+(define (iter-list list)
+  (let ((len (lenght 

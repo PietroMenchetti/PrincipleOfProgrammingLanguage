@@ -1,0 +1,44 @@
+#lang racket
+
+(define (add1 list)
+  (for-each
+   (lambda(x) (display "c")(exit (display "a")))list)) ;; the exit break the for each ! and calls the function passed as parameter
+
+(define (add list)
+  (for-each
+   (lambda(x) (display "c"))list))
+
+
+(define (maki lst)
+  (call/cc (lambda (exit)       ;;the call saves the continuation = nothing
+             (for-each
+              (lambda (x)
+                (call/cc (lambda (yield) ;; the call saves the continuation = i've just applied one time the call/cc to one element of lst, therefore the continuation is the next applicaton of the for each until the list ends
+                           (exit (cons x yield)) ;; exit breaks the execution of the for each and calls the function passed
+                           )))
+              lst))))
+
+;; cons a (cons b (cons c (cons d #procedure?)))
+
+(define (doit)
+  (let ((x (maki '(a b c d))))
+    (when (cons? x)
+      (displayln (car x))
+      ((cdr x)))))  ;; since here the continuation has never been called! x = '(a . #<continuation>) , i call ((cdr x)) means i'm calling the continuation of the for each which is (exit (cons b yield))
+
+(define (mymaki lst)
+  (call/cc (lambda (exit)       
+             (for-each
+              (lambda (x)
+                (call/cc (lambda (yield) 
+                           (cons x yield)   ;; the exit returns a procedure so that when i call the what it's returned from maki i call that procedure, here i'm just consing
+                           )))
+              lst))))
+
+(define-syntax curried
+  (syntax-rules ()
+    ((_ (x) e ... )
+     (lambda (x) e ...))
+    ((_ (x1 x2 ...) e ...)
+     (lambda(x1)
+       (curried (x2 ...) e ...)))))

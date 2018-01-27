@@ -1,0 +1,86 @@
+SourceContentsIndex
+base-4.10.1.0: Basic libraries
+Copyright	(c) The University of Glasgow 2001
+License	BSD-style (see the file libraries/base/LICENSE)
+Maintainer	libraries@haskell.org
+Stability	provisional
+Portability	portable
+Safe Haskell	Safe
+Language	Haskell2010
+System.Environment
+Miscellaneous information about the system environment.
+
+Synopsis
+Documentation
+getArgs :: IO [String] Source#
+
+Computation getArgs returns a list of the program's command line arguments (not including the program name).
+
+getProgName :: IO String Source#
+
+Computation getProgName returns the name of the program as it was invoked.
+
+However, this is hard-to-impossible to implement on some non-Unix OSes, so instead, for maximum portability, we just return the leafname of the program as invoked. Even then there are some differences between platforms: on Windows, for example, a program invoked as foo is probably really FOO.EXE, and that is what getProgName will return.
+
+getExecutablePath :: IO FilePath Source#
+
+Returns the absolute pathname of the current executable.
+
+Note that for scripts and interactive sessions, this is the path to the interpreter (e.g. ghci.)
+
+Since: 4.6.0.0
+
+getEnv :: String -> IO String Source#
+
+Computation getEnv var returns the value of the environment variable var. For the inverse, POSIX users can use putEnv.
+
+This computation may fail with:
+
+isDoesNotExistError if the environment variable does not exist.
+lookupEnv :: String -> IO (Maybe String) Source#
+
+Return the value of the environment variable var, or Nothing if there is no such value.
+
+For POSIX users, this is equivalent to getEnv.
+
+Since: 4.6.0.0
+
+setEnv :: String -> String -> IO () Source#
+
+setEnv name value sets the specified environment variable to value.
+
+On Windows setting an environment variable to the empty string removes that environment variable from the environment. For the sake of compatibility we adopt that behavior. In particular
+
+setEnv name ""
+has the same effect as
+
+unsetEnv name
+If you don't care about Windows support and want to set an environment variable to the empty string use System.Posix.Env.setEnv from the unix package instead.
+
+Throws IOException if name is the empty string or contains an equals sign.
+
+Since: 4.7.0.0
+
+unsetEnv :: String -> IO () Source#
+
+unsetEnv name removes the specified environment variable from the environment of the current process.
+
+Throws IOException if name is the empty string or contains an equals sign.
+
+Since: 4.7.0.0
+
+withArgs :: [String] -> IO a -> IO a Source#
+
+withArgs args act - while executing action act, have getArgs return args.
+
+withProgName :: String -> IO a -> IO a Source#
+
+withProgName name act - while executing action act, have getProgName return name.
+
+getEnvironment :: IO [(String, String)] Source#
+
+getEnvironment retrieves the entire environment as a list of (key,value) pairs.
+
+If an environment entry does not contain an '=' character, the key is the whole entry and the value is the empty string.
+
+Produced by Haddock version 2.18.1

@@ -1,0 +1,5 @@
+producer ag1 ag2 = prod’ ag1 [] ag2 0 1
+    where
+    prod’ ag1 st1 ag2 st2 i | i >= 10 = (st2:st1)
+    prod’ ag1 st1 ag2 st2 i | odd i = prod’ ag1 (ag1 i st1) ag2 st2 (i+1)
+    prod’ ag1 st1 ag2 st2 i | even i = prod’ ag1 st1 ag2 (ag2 i st2) (i+1)

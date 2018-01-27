@@ -69,7 +69,9 @@
                (car args)
                (apply choose (- i 1) (cdr args)))))
 
-(time (choose 1 (lambda ()(fact 5)) (+ 1 2) (lambda ()(fib 40))))
+(time (choose 1 (lambda ()(fact 5))  (+ 1 2) (lambda ()(fib 40))))  
+
+(time (choose 1 (fact 5) (+ 1 2) (fib 40)))                ;; choose permette di selezionare una funzione es (choose 0 ) la prima (choose 1) la seconda ... 
 
 (define-syntax choose-m
   (syntax-rules ()
@@ -82,8 +84,8 @@
 
 (define (right-now)
   (call/cc
-   (lambda (x)
-     (x 1))))      ;;it will start again when you left
+   (lambda (cc)
+     (cc 1))))      ;;cc procedure return the parameter passed
 
 (define (test-cc)
   (call/cc (lambda ( escape)
@@ -92,14 +94,24 @@
              (display "after esc"))))
 
 (define (break-test)
-  (+
   (call/cc (lambda (break)
              (for-each
               (lambda (i)
                 (when (= (modulo i 2) 0)
-                    (break (* 6 6))                       ;; chiamo la continuation senza parametro
+                    (break i)                       ;; chiamo la continuation senza parametro
                     ))
-              '(5 3 5 7 9 2))))
-  3))
+              '(5 3 5 7 9 10)))))
 
-(break-test)
+( define saved-cont #f )
+
+( define ( test-cont )
+   (let (( x 0))
+     (call/cc
+            ( lambda ( k) ; k contains the continuation
+               ( set! saved-cont k ))) ; here is saved and ends the (call/cc)
+     ;; this *is* the continuation
+     (set! x (+ x 1))
+     ( display x)
+     ( newline )))
+
+
