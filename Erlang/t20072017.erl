@@ -1,5 +1,5 @@
 -module(t20072017).
--export([create_dlist/1,cell/1,dlist_to_list/1,d_map/2]).
+-export([create_dlist/1,cell/1,dlist_to_list/1,d_map/2,collect/1]).
 
 create_dlist(0) -> [];
 
