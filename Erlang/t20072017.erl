@@ -1,11 +1,11 @@
 -module(t20072017).
--export([create_dlist/1,cell/1,dlist_to_list/1,D_map/1]).
+-export([create_dlist/1,cell/1,dlist_to_list/1,d_map/2]).
 
 create_dlist(0) -> [];
 
 create_dlist(N) -> [spawn(t20072017,cell,[0])] ++ create_dlist(N - 1).
 
-D_map(Dl,F) ->
+d_map(Dl,F) ->
                 lists:foreach(fun(W) ->
                                  W ! {(F collect(W)),set},
                                 end,
