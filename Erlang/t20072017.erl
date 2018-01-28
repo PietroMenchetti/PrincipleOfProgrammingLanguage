@@ -28,7 +28,7 @@ collect(W) ->
 
 dlist_to_list(Dl) ->
                     lists:map(fun(W) ->
-                                collect(W),
+                                collect(W)
                                 end,
                                 Dl).
 
