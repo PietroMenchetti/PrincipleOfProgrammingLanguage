@@ -5,6 +5,13 @@ create_dlist(0) -> [];
 
 create_dlist(N) -> [spawn(t20072017,cell,[0])] ++ create_dlist(N - 1).
 
+D_map(Dl,F) ->
+                lists:foreach(fun(W) ->
+                                 W ! {(F collect(W)),set},
+                                end,
+                                Dl).
+
+
 cell(X) -> 
         receive
             {Pid,get} -> Pid ! {self(),X},
@@ -12,18 +19,17 @@ cell(X) ->
             {Y,set} -> cell(Y)
         end.
 
+collect(W) ->
+    W ! {self(),get},
+    receive
+        {W,V} -> V
+    end.
+ 
+
 dlist_to_list(Dl) ->
                     lists:map(fun(W) ->
-                                W ! {self(),get},
-                                receive
-                                    {W,V} -> V
+                                collect(W),
                                 end,
                                 Dl).
 
-D_map(Dl,F) ->
-                lists:foreach(fun(W) ->
-                                W ! {self(),get},
-                                receive
-                                    {W,V} -> W ! {(F V),set}
-                                end,
-                                Dl).
+
